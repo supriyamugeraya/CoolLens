@@ -14,6 +14,9 @@ from .PayTm import Checksum
 def sample(request):
 	print("this is a sample request")
 
+def wholesale(request):
+	print("This is a whole sale method")
+
 def index(request):
 	if request.user.is_superuser:
 		return redirect('index')
