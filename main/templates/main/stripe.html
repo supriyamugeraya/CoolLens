@@ -1,0 +1,250 @@
+<style>* {
+  font-family: "Helvetica Neue", Helvetica;
+  font-size: 15px;
+  font-variant: normal;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background: #E6EBF1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+form {
+  width: 480px;
+  margin: 20px 0;
+}
+
+.group {
+  background: white;
+  box-shadow: 0 7px 14px 0 rgba(49, 49, 93, 0.10), 0 3px 6px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+label {
+  position: relative;
+  color: #8898AA;
+  font-weight: 300;
+  height: 40px;
+  line-height: 40px;
+  display: flex;
+  flex-direction: row;
+}
+
+.group label:not(:last-child) {
+  border-bottom: 1px solid #F0F5FA;
+}
+
+label > span {
+  width: 120px;
+  text-align: right;
+  margin-right: 30px;
+}
+
+.field {
+  background: transparent;
+  font-weight: 300;
+  border: 0;
+  color: #31325F;
+  outline: none;
+  flex: 1;
+  padding-right: 10px;
+  padding-left: 10px;
+  cursor: text;
+}
+
+.field::-webkit-input-placeholder {
+  color: #CFD7E0;
+}
+
+.field::-moz-placeholder {
+  color: #CFD7E0;
+}
+
+button {
+  float: left;
+  display: block;
+  background: #666EE8;
+  color: white;
+  box-shadow: 0 7px 14px 0 rgba(49, 49, 93, 0.10), 0 3px 6px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  border: 0;
+  margin-top: 20px;
+  font-size: 15px;
+  font-weight: 400;
+  width: 100%;
+  height: 40px;
+  line-height: 38px;
+  outline: none;
+}
+
+button:focus {
+  background: #555ABF;
+}
+
+button:active {
+  background: #43458B;
+}
+
+.outcome {
+  float: left;
+  width: 100%;
+  padding-top: 8px;
+  min-height: 24px;
+  text-align: center;
+}
+
+.success,
+.error {
+  display: none;
+  font-size: 13px;
+}
+
+.success.visible,
+.error.visible {
+  display: inline;
+}
+
+.error {
+  color: #E4584C;
+}
+
+.success {
+  color: #666EE8;
+}
+
+.success .token {
+  font-weight: 500;
+  font-size: 13px;
+}
+</style>
+<script src="https://js.stripe.com/v3/"></script>
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Card Payment</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<style>
+ 
+    body {
+      background-color: #e2d1f9;
+    }
+
+    /* Rest of your CSS code */
+  
+  .container {
+    max-width: 400px;
+    margin: 50px auto;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+  }
+
+  .text-danger {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+  }
+
+  .btn-primary:focus,
+  .btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+  }
+
+  .btn-primary.disabled,
+  .btn-primary:disabled {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled):active,
+  .btn-primary:not(:disabled):not(.disabled).active,
+  .show > .btn-primary.dropdown-toggle {
+    background-color: #0062cc;
+    border-color: #005cbf;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Card Payment</h2>
+  <form action="{% url 'stripe' %}" method="POST" onsubmit="return validateForm()">
+    {% csrf_token %}
+    <input type="hidden" name="token" />
+    <div class="form-group">
+      <label for="card_number">Card Number:</label>
+      <input type="text" class="form-control" id="card_number" name="card_number" placeholder="Enter your card number" pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}" required data-error-message="Enter a valid card number in the format XXXX-XXXX-XXXX-XXXX"data-error-message-style="color:red;font-weight:bold;" onblur="validateCardNumber(this)" />
+
+      <small id="card_number_error" class="text-danger"></small>
+    </div>
+
+    <div class="form-group">
+      <label for="expiration_date">Expiration Date:</label>
+      <input type="text" class="form-control" id="expiration_date" name="expiration_date" placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/[0-9]{2}" required>
+
+      <small id="expiration_date_error" class="text-danger"></small>
+    </div>
+
+    <div class="form-group">
+      <label for="cvv">CVV:</label>
+      <input type="password" class="form-control" id="cvv" name="cvv" placeholder="Enter your CVV" pattern="[0-9]{3}" required>
+
+      <small id="cvv_error" class="text-danger"></small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Pay</button>
+  </form>
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script>
+  function validateForm() {
+    var cardNumber = document.getElementById("card_number").value;
+    var expirationDate = document.getElementById("expiration_date").value;
+    var cvv = document.getElementById("cvv").value;
+    var cardNumberError = document.getElementById("card_number_error");
+    var expirationDateError = document.getElementById("expiration_date_error");
+    var cvvError = document.getElementById("cvv_error");
+    var isValid = true;
+
+    cardNumberError.innerText = "";
+    expirationDateError.innerText = "";
+    cvvError.innerText = "";
+  }
+</script>
+</body>
+</html>
+  

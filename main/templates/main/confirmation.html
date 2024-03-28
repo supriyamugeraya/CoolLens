@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <body>
+        <div class="order-confirm-details pb-5 ms-4">
+            {% if payment_status == 'success' %}
+            <p class="title-semibold-italic-orange">Order confirmed!!</p>
+            <p class="heading-1-black mt-3 confirm-order-id">your Order is confirmed with order id:
+                <span class="heading-1-semibold-italic-orange">#od1234</span>
+            </p>
+            <p class="heading-1-black mt-3 confirm-order-id">Current Order Status:
+                <span class="heading-1-semibold-italic-orange">Under Process</span>
+
+            </p>
+            <div class="row mt-4">
+                <a href="" class="simple-btn confirm-action-btn heading-3-regular-white text-center">Continue shopping</a>
+            </div>
+            {% else %}
+            <p>Oops,somthing went wrong,plz try again</p>
+            {% endif %}
+
+
+        </div>
+    </body>
+</head>

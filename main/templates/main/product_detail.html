@@ -1,0 +1,11 @@
+<!-- product_detail.html -->
+<h1>{{ product.name }}</h1>
+<!-- display other product details -->
+
+<h2>Zoom Level: {{ zoom }}%</h2>
+
+<form method="POST" action="{% url 'product_detail' product.id %}">
+  {% csrf_token %}
+  <button type="submit" name="zoom_in">Zoom In</button>
+  <button type="submit" name="zoom_out">Zoom Out</button>
+</form>
